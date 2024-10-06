@@ -1,91 +1,70 @@
-import React, { useState } from 'react'
+import React, { Component, useState } from "react";
+import "../styles/App.css";
 
-const outputs = ["Friends", "Love", "Affection", "Marriage", "Enemy", "Siblings"]
-
-const App = () => {
-
-    const[fn, setFn] = useState("")
-    const[ln, setLn] = useState("")
-    const[relation, setRelation] = useState("")
-
-
-
-    const calculateBtnHandler = () => {
-
-        if(fn.length == 0 || ln.length == 0)
-        {
-            return setRelation("Please Enter valid input")
-        }
-
-        console.log("heheh")
-        let firstArr = fn.split("")
-        let SecondArr = ln.split("")
-        let nArr = []
-
-        for(let i = 0; i < firstArr.length; i++)
-        {
-            let flag = false;
-            for(let j = 0; j < SecondArr.length; j++)
-            {
-                if(firstArr[i] === SecondArr[j])
-                {
-                    flag = true;
-                    SecondArr.splice(j, 1)
-                    break;
-                }
-
-                
-            }
-
-            if(!flag)
-                {
-                    nArr.push(firstArr[i])
-                }
-        }
-
-        let tbc = (nArr.length + SecondArr.length) % 6;
-
-        switch(tbc){
-            case 1 :
-                return setRelation('Friends');
-            case 2 :
-                return setRelation('Love');
-            case 3 :
-                return setRelation('Affection');
-            case 4 :
-                return setRelation('Marriage');
-            case 5 :
-                return setRelation('Enemy');
-            case 0 :
-                return setRelation('Siblings');
-        }
-        
+function App() {
+  const [name1, setName1] = useState("");
+  const [name2, setName2] = useState("");
+  const [output, setOutput] = useState("");
+  const submit = (e) => {
+    e.preventDefault();
+    if (name1 == "" || name2 == "") {
+      setOutput("Please Enter valid input");
+      return;
     }
-
+    let ans = solve(name1, name2);
+    setOutput(ans);
+  };
   return (
-    <div>
-        
-        <input name='name1' data-testid="input1" value={fn} onChange={(e) => {
-            setFn(e.target.value)
-        }} placeholder='Enter first name'/>
-        <input name='name2' data-testid="input2" value={ln} onChange={(e) => {
-            setLn(e.target.value)
-        }} placeholder='Enter second name'/>
-        <button data-testid="calculate_relationship" onClick={calculateBtnHandler}>Calculate Relationship Future</button>
-        <button data-testid="clear" onClick={() => {
-            setFn("")
-            setLn("")
-            setRelation("")
-        }}>Clear</button>
-
-        <h3 data-testid="answer">{relation}</h3>
-
+    <div id="main">
+      <form onSubmit={submit}>
+        <input
+          name="name1"
+          data-testid="input1"
+          type="text"
+          placeholder="Enter first name"
+          onChange={(e) => setName1(e.target.value)}
+        />
+        <input
+          name="name2"
+          data-testid="input2"
+          type="text"
+          placeholder="Enter second name"
+          onChange={(e) => setName2(e.target.value)}
+        />
+        <button data-testid="calculate_relationship" type="submit">
+          Calculate Relationship Future
+        </button>
+        <button data-testid="clear" type="reset" onClick={(e) => setOutput("")}>
+          Clear
+        </button>
+      </form>
+      <h3 data-testid="answer">{output}</h3>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 
+function solve(s1, s2) {
+  //   console.log(s1, s2);
+  const res = {
+    1: "Friends",
+    2: "Love",
+    3: "Affection",
+    4: "Marriage",
+    5: "Enemy",
+    0: "Siblings",
+  };
 
+  // logic of Flame game ---
+  let countS1 = s1.length;
+  for (let i of s1) {
+    if (s2.includes(i)) {
+      s2 = s2.replace(i, "");
+      countS1--;
+    }
+  }
 
-//kjshdkjhsdf
+  let count = s2.length + countS1;
+  return res[count % 6];
+}
